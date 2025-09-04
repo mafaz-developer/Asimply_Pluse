@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { 
-  Home, Gamepad2, Trophy, Users2, Wallet, User2
+  Home, Gamepad2, Trophy, Users2, Wallet, User2, Zap, Play
 } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 
@@ -13,11 +13,37 @@ const links = [
   { to: "/profile", label: "Profile", icon: User2 },
 ];
 
+const gameLinks = [
+  { to: "/games/spin-win", label: "Spin & Win", icon: Zap },
+  { to: "/games/runner", label: "Runner", icon: Play },
+];
+
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const content = (
     <nav className="w-64 shrink-0 px-4 py-6 hidden md:block">
       <ul className="space-y-2">
         {links.map((l) => {
+          const Icon = l.icon;
+          return (
+            <li key={l.to}>
+              <NavLink
+                to={l.to}
+                className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-2 text-white/90 hover:bg-white/10 ${isActive ? "bg-white/15" : ""}`}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="font-medium">{l.label}</span>
+              </NavLink>
+            </li>
+          );
+        })}
+        
+        {/* Games Section */}
+        <li className="pt-4">
+          <div className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-2 px-3">
+            Games
+          </div>
+        </li>
+        {gameLinks.map((l) => {
           const Icon = l.icon;
           return (
             <li key={l.to}>
@@ -43,6 +69,27 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           <div className="px-4 py-6">
             <ul className="space-y-2">
               {links.map((l) => {
+                const Icon = l.icon;
+                return (
+                  <li key={l.to}>
+                    <NavLink onClick={onClose}
+                      to={l.to}
+                      className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-2 text-white/90 hover:bg-white/10 ${isActive ? "bg-white/15" : ""}`}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="font-medium">{l.label}</span>
+                    </NavLink>
+                  </li>
+                );
+              })}
+              
+              {/* Games Section */}
+              <li className="pt-4">
+                <div className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-2 px-3">
+                  Games
+                </div>
+              </li>
+              {gameLinks.map((l) => {
                 const Icon = l.icon;
                 return (
                   <li key={l.to}>

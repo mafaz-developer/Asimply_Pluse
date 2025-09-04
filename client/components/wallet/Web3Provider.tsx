@@ -8,13 +8,14 @@ const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as string | unde
 const chains = [mainnet, polygon, base, optimism, arbitrum] as const;
 
 const metadata = {
-  name: "Asimply Pluse",
-  description: "Asimply Pluse - Web3 Loyalty Dashboard",
-  url: "https://asimplypluse.app", // fallback
+  name: "Asimply Pulse",
+  description: "Asimply Pulse - Web3 Loyalty Dashboard",
+  url: "https://asimplypulse.app", // fallback
   icons: ["/logo.svg"],
 };
 
-let wagmiConfig = createConfig({
+// Create a basic wagmi config first
+const wagmiConfig = createConfig({
   chains,
   transports: {
     [mainnet.id]: http(),
@@ -25,13 +26,15 @@ let wagmiConfig = createConfig({
   },
 });
 
+// Initialize Web3Modal only when a valid projectId exists
 if (projectId) {
-  wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata, enableInjected: true, enableWalletConnect: true });
-}
-
-if (projectId) {
-  // Initialize Web3Modal only when a valid projectId exists
-  createWeb3Modal({ wagmiConfig, projectId, chains, themeMode: "dark" });
+  createWeb3Modal({ 
+    wagmiConfig, 
+    projectId, 
+    themeMode: "dark",
+    enableAnalytics: false,
+    enableOnramp: false
+  });
 }
 
 export function Web3Provider({ children }: { children: ReactNode }) {

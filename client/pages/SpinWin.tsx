@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, useAnimation } from "framer-motion";
+import { mockStore } from "@/lib/mockStore";
 
 const PRIZES = [
   { label: "+5 AST", value: 5 },
@@ -53,8 +54,17 @@ export default function SpinWin() {
     const target = 360 * rounds + (360 - idx * slice) - slice / 2; // land at center of slice
     await controls.start({ rotate: target, transition: { duration: 4, ease: [0.12, 0.49, 0.15, 1] } });
     const prize = PRIZES[idx];
-    if (prize.value > 0) toast.success(`You won ${prize.value} AST!`);
-    else toast("No prize this time — try again tomorrow!");
+    
+    if (prize.value > 0) {
+      // Add reward to user balance
+      mockStore.updateBalance(prize.value);
+      // Add game session
+      mockStore.addGameSession('spin-win', prize.value, prize.value, 30);
+      toast.success(`You won ${prize.value} AST!`);
+    } else {
+      toast("No prize this time — try again tomorrow!");
+    }
+    
     setResult(prize.label);
     setSpinning(false);
     setSpunNow();

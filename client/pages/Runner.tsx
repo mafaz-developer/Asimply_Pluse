@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { mockStore } from "@/lib/mockStore";
 
 export default function Runner() {
   const [running, setRunning] = useState(false);
@@ -41,13 +42,24 @@ export default function Runner() {
         const rect = { x: o.x, y: 200 - o.h, w: 24, h: o.h };
         if (rect.x < playerRect.x + playerRect.w && rect.x + rect.w > playerRect.x && rect.y < playerRect.y + playerRect.h && rect.y + rect.h > playerRect.y) {
           setRunning(false);
-          setBest((b) => Math.max(b, score));
-          toast.error("Crashed! Try again.");
+          const newBest = Math.max(best, score);
+          setBest(newBest);
+          
+          // Calculate reward based on score
+          const reward = Math.floor(score / 100) + 1; // 1 AST per 100 points
+          if (reward > 0) {
+            mockStore.updateBalance(reward);
+            mockStore.addGameSession('runner', score, reward, Math.floor(score / 10)); // Duration based on score
+            toast.success(`Game over! Score: ${score}. Earned ${reward} AST!`);
+          } else {
+            toast.error("Crashed! Try again.");
+          }
           return;
         }
       }
       // rewards
       if (score > 0 && score % 200 === 0) {
+        mockStore.updateBalance(5);
         toast.success("Milestone reached! +5 AST");
       }
       ref.current = requestAnimationFrame(loop);
